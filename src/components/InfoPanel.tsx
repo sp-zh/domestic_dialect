@@ -1,5 +1,6 @@
 import { PauseCircle, PlayCircle, Volume2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { getDataSource } from "../data/sources";
 import type { DialectAudio } from "../types/dialect";
 import { confidenceLabel, getDialect, getFeature, getRegionAudios, getRegionStat } from "../utils/dataLookup";
 
@@ -107,9 +108,13 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
                 <div className="h-full bg-cinnabar" style={{ width: `${dialect.percentage ?? 0}%` }} />
               </div>
               {showEstimated ? (
-                <p className="mt-1 text-xs text-stone-500">
-                  数据可信度：{confidenceLabel[dialect.confidence]} {dialect.dataSource ? `· ${dialect.dataSource}` : ""}
-                </p>
+                <SourceLine
+                  confidence={confidenceLabel[dialect.confidence]}
+                  sourceId={dialect.dataSource}
+                  sourceUrl={dialect.sourceUrl}
+                  basis={dialect.percentageBasis}
+                  notes={dialect.notes}
+                />
               ) : null}
             </div>
           ))}
@@ -300,3 +305,43 @@ const kindLabel: Record<string, string> = {
   conversation: "自然对话",
   story: "民间故事",
 };
+
+const basisLabel: Record<string, string> = {
+  survey: "实地调查比例",
+  "census-language": "语言人口统计",
+  "literature-estimate": "文献估算",
+  "not-available": "未见公开比例",
+};
+
+function SourceLine({
+  confidence,
+  sourceId,
+  sourceUrl,
+  basis,
+  notes,
+}: {
+  confidence: string;
+  sourceId?: string;
+  sourceUrl?: string;
+  basis?: string;
+  notes?: string;
+}) {
+  const source = getDataSource(sourceId);
+  const url = sourceUrl ?? source?.url;
+
+  return (
+    <p className="mt-1 text-xs leading-5 text-stone-500">
+      数据可信度：{confidence}
+      {basis ? ` · 比例依据：${basisLabel[basis] ?? basis}` : ""}
+      {source ? " · 来源：" : ""}
+      {source && url ? (
+        <a href={url} target="_blank" rel="noreferrer" className="text-cinnabar hover:underline">
+          {source.title}
+        </a>
+      ) : source ? (
+        source.title
+      ) : null}
+      {notes ? ` · ${notes}` : ""}
+    </p>
+  );
+}

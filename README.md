@@ -30,7 +30,7 @@ npm run dev
 
 ## 重要说明
 
-`public/geojson/china` 里的 GeoJSON 是为了让 MVP 可直接运行的简化边界，不适合作为严肃地图数据。后续请替换为经过授权的权威行政区划 GeoJSON。示例数据仅用于演示结构，未声称完整，也未伪造精确人口比例。
+`public/geojson/china` 里的 GeoJSON 已替换为公开 DataV.GeoAtlas 行政区划边界文件。示例方言归属来源已改为《中国语言地图集》第2版与中国语言资源保护工程采录展示平台。示例数据仍未声称完整；没有公开可核验的城市级方言使用人口比例时，不填写 `percentage`，页面显示“暂无精确数据”。
 
 ## 项目结构
 
@@ -63,6 +63,7 @@ domestic_dialect/
       linguisticGlossary.ts
       regionDialectStats.ts
       regions.ts
+      sources.ts
     types/
       dialect.ts
     utils/
@@ -72,3 +73,9 @@ domestic_dialect/
     styles.css
   DATA_GUIDE.md
 ```
+
+## 数据来源
+
+- 行政区边界：DataV.GeoAtlas，`https://geo.datav.aliyun.com/areas_v3/bound/`
+- 方言归属：《中国语言地图集》第2版，中国社会科学院语言研究所、香港城市大学语言资讯科学研究中心编，商务印书馆，2012
+- 调查材料入口：中国语言资源保护工程采录展示平台，`https://www.zhongguoyuyan.cn/`

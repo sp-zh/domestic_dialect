@@ -6,8 +6,9 @@ import { familyColors, getPrimaryDialect, getRegion, getRegionStat, statMatchesF
 
 type MapFeatureProps = {
   name: string;
-  code: string;
-  level: RegionLevel;
+  code?: string;
+  adcode?: number;
+  level: RegionLevel | "district";
   parentCode?: string;
   geoJsonUrl?: string;
 };
@@ -53,10 +54,12 @@ export function DialectMap({
   }, []);
 
   const bindFeature = useCallback((layer: Layer, feature: Feature<Geometry, MapFeatureProps>) => {
-    const props = feature.properties;
+    const props = normalizeFeatureProps(feature.properties);
     const stat = getRegionStat(props.code);
     const primary = getPrimaryDialect(stat);
-    const canDrillDown = Boolean(props.geoJsonUrl);
+    const configuredRegion = getRegion(props.code);
+    const drillUrl = props.geoJsonUrl ?? configuredRegion?.geoJsonUrl;
+    const canDrillDown = Boolean(drillUrl);
 
     layer.bindTooltip(
       `<strong>${props.name}</strong><br/>${primary ? `${primary.dialectName} · ${primary.family}` : "暂无方言数据"}`,
@@ -117,7 +120,8 @@ export function DialectMap({
 
     geoLayer.eachLayer((layer) => {
       const feature = (layer as L.Layer & { feature?: Feature<Geometry, MapFeatureProps> }).feature;
-      if (feature?.properties.code === focusedRegionCode) {
+      const props = feature ? normalizeFeatureProps(feature.properties) : undefined;
+      if (props?.code === focusedRegionCode) {
         const bounds = (layer as L.Polygon).getBounds?.();
         if (bounds?.isValid()) map.fitBounds(bounds.pad(0.2), { animate: true, maxZoom: 7 });
       }
@@ -148,11 +152,12 @@ function getFeatureStyle(
   showMixed: boolean,
 ) {
   const props = feature?.properties;
-  const stat = getRegionStat(props?.code);
+  const normalized = props ? normalizeFeatureProps(props) : undefined;
+  const stat = getRegionStat(normalized?.code);
   const primary = getPrimaryDialect(stat);
   const matches = statMatchesFilters(stat, activeFamilies, branchFilter, onlyWithAudio, showMixed);
   const fillColor = primary ? familyColors[primary.family] : "#c9c7be";
-  const isSelected = selectedRegionCode === props?.code;
+  const isSelected = selectedRegionCode === normalized?.code;
 
   return {
     color: isSelected ? "#111827" : "#ffffff",
@@ -160,5 +165,13 @@ function getFeatureStyle(
     fillColor,
     fillOpacity: matches ? 0.78 : 0.12,
     opacity: matches ? 1 : 0.35,
+  };
+}
+
+function normalizeFeatureProps(props: MapFeatureProps) {
+  return {
+    ...props,
+    code: props.code ?? String(props.adcode ?? ""),
+    level: props.level === "district" ? "county" : props.level,
   };
 }

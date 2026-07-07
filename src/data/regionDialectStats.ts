@@ -7,7 +7,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "北京市",
     level: "province",
     center: [116.4, 39.9],
-    dialects: [{ dialectId: "beijing_mandarin", dialectName: "北京官话", family: "官话", branch: "北京官话", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "beijing_mandarin", dialectName: "北京官话", family: "官话", branch: "北京官话", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的北京市北京官话使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "310000",
@@ -15,7 +15,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "上海市",
     level: "province",
     center: [121.47, 31.23],
-    dialects: [{ dialectId: "shanghai_wu", dialectName: "上海话", family: "吴语", branch: "太湖片", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "shanghai_wu", dialectName: "上海话", family: "吴语", branch: "太湖片", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的上海话使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "440100",
@@ -23,7 +23,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "广东省",
     level: "city",
     center: [113.27, 23.13],
-    dialects: [{ dialectId: "cantonese_guangfu", dialectName: "粤语广府片", family: "粤语", branch: "广府片", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "cantonese_guangfu", dialectName: "粤语广府片", family: "粤语", branch: "广府片", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的广州市粤语使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "510100",
@@ -31,7 +31,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "四川省",
     level: "city",
     center: [104.07, 30.67],
-    dialects: [{ dialectId: "southwest_mandarin", dialectName: "西南官话", family: "官话", branch: "西南官话", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "southwest_mandarin", dialectName: "西南官话", family: "官话", branch: "西南官话", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的成都市西南官话使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "350200",
@@ -39,7 +39,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "福建省",
     level: "city",
     center: [118.08, 24.48],
-    dialects: [{ dialectId: "minnan_xiamen", dialectName: "闽南语厦门话", family: "闽语", branch: "闽南语", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "minnan_xiamen", dialectName: "闽南语厦门话", family: "闽语", branch: "闽南语", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的厦门市闽南语使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "350100",
@@ -47,7 +47,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "福建省",
     level: "city",
     center: [119.3, 26.08],
-    dialects: [{ dialectId: "mindong_fuzhou", dialectName: "闽东语福州话", family: "闽语", branch: "闽东语", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "mindong_fuzhou", dialectName: "闽东语福州话", family: "闽语", branch: "闽东语", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的福州市闽东语使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "360100",
@@ -55,7 +55,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "江西省",
     level: "city",
     center: [115.86, 28.68],
-    dialects: [{ dialectId: "gan_nanchang", dialectName: "赣语南昌话", family: "赣语", branch: "昌都片", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "gan_nanchang", dialectName: "赣语南昌话", family: "赣语", branch: "昌都片", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的南昌市赣语使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "430100",
@@ -63,7 +63,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "湖南省",
     level: "city",
     center: [112.98, 28.2],
-    dialects: [{ dialectId: "xiang_changsha", dialectName: "湘语长沙话", family: "湘语", branch: "新湘语", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "xiang_changsha", dialectName: "湘语长沙话", family: "湘语", branch: "新湘语", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的长沙市湘语使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "140100",
@@ -71,7 +71,7 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "山西省",
     level: "city",
     center: [112.55, 37.87],
-    dialects: [{ dialectId: "jin_taiyuan", dialectName: "晋语太原话", family: "晋语", branch: "并州片", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "jin_taiyuan", dialectName: "晋语太原话", family: "晋语", branch: "并州片", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的太原市晋语使用人口比例调查，故不填 percentage。" }],
   },
   {
     regionCode: "441400",
@@ -79,6 +79,6 @@ export const regionDialectStats: RegionDialectStat[] = [
     province: "广东省",
     level: "city",
     center: [116.12, 24.29],
-    dialects: [{ dialectId: "hakka_meixian", dialectName: "客家话梅县话", family: "客家话", branch: "粤台片", confidence: "medium", dataSource: "演示数据：待补充权威来源", notes: "未填入精确比例。" }],
+    dialects: [{ dialectId: "hakka_meixian", dialectName: "客家话梅县话", family: "客家话", branch: "粤台片", percentageBasis: "not-available", confidence: "medium", dataSource: "language-atlas-china-2", notes: "来源用于方言归属整理；暂未找到公开、可核验的梅州市客家话使用人口比例调查，故不填 percentage。" }],
   },
 ];

@@ -47,9 +47,11 @@ export type RegionDialectStat = {
     family: DialectFamily;
     branch?: string;
     percentage?: number;
+    percentageBasis?: "survey" | "census-language" | "literature-estimate" | "not-available";
     populationEstimate?: number;
     confidence: DataConfidence;
     dataSource?: string;
+    sourceUrl?: string;
     notes?: string;
   }[];
 };
