@@ -3,6 +3,7 @@ import L, { type Layer } from "leaflet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DialectFamily, RegionLevel } from "../types/dialect";
 import { familyColors, getPrimaryDialect, getRegion, getRegionStat, statMatchesFilters } from "../utils/dataLookup";
+import { publicAssetUrl } from "../utils/publicPath";
 
 type MapFeatureProps = {
   name: string;
@@ -88,9 +89,11 @@ export function DialectMap({
     let cancelled = false;
     setLoadError("");
 
-    fetch(currentRegion.geoJsonUrl)
+    const geoJsonUrl = publicAssetUrl(currentRegion.geoJsonUrl);
+
+    fetch(geoJsonUrl)
       .then((response) => {
-        if (!response.ok) throw new Error(`无法加载地图边界：${currentRegion.geoJsonUrl}`);
+        if (!response.ok) throw new Error(`无法加载地图边界：${geoJsonUrl}`);
         return response.json() as Promise<FeatureCollection<Geometry, MapFeatureProps>>;
       })
       .then((geojson) => {
@@ -137,7 +140,7 @@ export function DialectMap({
         </div>
       ) : null}
       <div className="pointer-events-none absolute bottom-4 right-4 max-w-sm rounded-md border border-white/50 bg-white/88 px-3 py-2 text-xs text-stone-600 shadow-soft backdrop-blur dark:border-stone-700 dark:bg-stone-950/82 dark:text-stone-300">
-        MVP 使用简化边界演示交互；可在 <span className="font-mono">public/geojson</span> 替换为权威 GeoJSON。
+        当前使用公开行政区划 GeoJSON；方言数据与地图边界分离维护。
       </div>
     </div>
   );

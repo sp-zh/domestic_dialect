@@ -17,6 +17,22 @@ npm install
 npm run dev
 ```
 
+## 发布
+
+项目已配置 GitHub Pages 自动发布。推送到 `main` 后，GitHub Actions 会执行：
+
+```bash
+npm ci
+npm run lint
+GITHUB_PAGES=true npm run build
+```
+
+发布地址：
+
+```txt
+https://sp-zh.github.io/domestic_dialect/
+```
+
 ## 当前功能
 
 - 全国省级地图，点击可进入示例省份的市级地图

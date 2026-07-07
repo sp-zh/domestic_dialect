@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { getDataSource } from "../data/sources";
 import type { DialectAudio } from "../types/dialect";
 import { confidenceLabel, getDialect, getFeature, getRegionAudios, getRegionStat } from "../utils/dataLookup";
+import { publicAssetUrl } from "../utils/publicPath";
 
 type InfoPanelProps = {
   regionCode?: string;
@@ -215,7 +216,7 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
                       ref={(node) => {
                         audioRefs.current[audio.id] = node;
                       }}
-                      src={audio.audioUrl}
+                      src={publicAssetUrl(audio.audioUrl)}
                       controls
                       className="mt-3 w-full"
                       onPause={() => setPlayingId((current) => (current === audio.id ? undefined : current))}
