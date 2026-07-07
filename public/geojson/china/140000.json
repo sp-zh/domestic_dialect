@@ -1,0 +1,4 @@
+{ "type": "FeatureCollection", "features": [
+  { "type": "Feature", "properties": { "name": "山西其他地区", "code": "149900", "level": "city", "parentCode": "140000" }, "geometry": { "type": "Polygon", "coordinates": [[[110.1,34.6],[114.6,34.6],[114.6,40.8],[110.1,40.8],[110.1,34.6]]] } },
+  { "type": "Feature", "properties": { "name": "太原市", "code": "140100", "level": "city", "parentCode": "140000" }, "geometry": { "type": "Polygon", "coordinates": [[[111.8,37.3],[113.2,37.3],[113.2,38.5],[111.8,38.5],[111.8,37.3]]] } }
+] }

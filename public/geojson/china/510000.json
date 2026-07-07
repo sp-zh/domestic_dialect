@@ -1,0 +1,4 @@
+{ "type": "FeatureCollection", "features": [
+  { "type": "Feature", "properties": { "name": "四川其他地区", "code": "519900", "level": "city", "parentCode": "510000" }, "geometry": { "type": "Polygon", "coordinates": [[[97.3,26.0],[108.8,26.0],[108.8,34.3],[97.3,34.3],[97.3,26.0]]] } },
+  { "type": "Feature", "properties": { "name": "成都市", "code": "510100", "level": "city", "parentCode": "510000" }, "geometry": { "type": "Polygon", "coordinates": [[[103.2,30.1],[104.9,30.1],[104.9,31.4],[103.2,31.4],[103.2,30.1]]] } }
+] }

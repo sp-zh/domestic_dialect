@@ -1,0 +1,5 @@
+{ "type": "FeatureCollection", "features": [
+  { "type": "Feature", "properties": { "name": "粤西与珠三角其他地区", "code": "449900", "level": "city", "parentCode": "440000" }, "geometry": { "type": "Polygon", "coordinates": [[[109.6,20.2],[117.4,20.2],[117.4,25.6],[109.6,25.6],[109.6,20.2]]] } },
+  { "type": "Feature", "properties": { "name": "广州市", "code": "440100", "level": "city", "parentCode": "440000" }, "geometry": { "type": "Polygon", "coordinates": [[[112.6,22.7],[114.1,22.7],[114.1,23.9],[112.6,23.9],[112.6,22.7]]] } },
+  { "type": "Feature", "properties": { "name": "梅州市", "code": "441400", "level": "city", "parentCode": "440000" }, "geometry": { "type": "Polygon", "coordinates": [[[115.3,23.7],[116.9,23.7],[116.9,24.9],[115.3,24.9],[115.3,23.7]]] } }
+] }

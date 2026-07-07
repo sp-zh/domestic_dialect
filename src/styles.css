@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: transparent;
+  font-family: inherit;
+}
+
+.leaflet-control-zoom a {
+  color: #1e2a24;
+}
+
+.dialect-tooltip {
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 12px 30px rgba(30, 42, 36, 0.18);
+  color: #1e2a24;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+audio {
+  height: 36px;
+}
