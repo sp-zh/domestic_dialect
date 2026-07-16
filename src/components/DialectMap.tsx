@@ -2,7 +2,7 @@ import type { Feature, FeatureCollection, Geometry } from "geojson";
 import L, { type Layer } from "leaflet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DialectFamily, RegionLevel } from "../types/dialect";
-import { familyColors, getPrimaryDialect, getRegion, getRegionStatWithFallback, getVisibleSurveyPoints, statMatchesFilters } from "../utils/dataLookup";
+import { familyColors, getPrimaryDialect, getRegion, getRegionStatWithFallback, getVisibleAudioPoints, getVisibleSurveyPoints, statMatchesFilters } from "../utils/dataLookup";
 import { publicAssetUrl } from "../utils/publicPath";
 
 type MapFeatureProps = {
@@ -22,6 +22,11 @@ type DialectMapProps = {
   onlyWithAudio: boolean;
   showMixed: boolean;
   focusedRegionCode?: string;
+  layerVisibility: {
+    choropleth: boolean;
+    surveyPoints: boolean;
+    audioPoints: boolean;
+  };
   onNavigate: (regionCode: string) => void;
   onSelect: (regionCode: string) => void;
 };
@@ -34,6 +39,7 @@ export function DialectMap({
   onlyWithAudio,
   showMixed,
   focusedRegionCode,
+  layerVisibility,
   onNavigate,
   onSelect,
 }: DialectMapProps) {
@@ -41,6 +47,7 @@ export function DialectMap({
   const mapRef = useRef<L.Map | null>(null);
   const geoLayerRef = useRef<L.GeoJSON | null>(null);
   const surveyLayerRef = useRef<L.LayerGroup | null>(null);
+  const audioLayerRef = useRef<L.LayerGroup | null>(null);
   const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
@@ -77,10 +84,10 @@ export function DialectMap({
         (layer as L.Path).setStyle({ weight: 2.5, color: "#1f2933", fillOpacity: 0.92 });
       },
       mouseout: () => {
-        (layer as L.Path).setStyle(getFeatureStyle(feature, selectedRegionCode, activeFamilies, branchFilter, onlyWithAudio, showMixed));
+        (layer as L.Path).setStyle(getFeatureStyle(feature, selectedRegionCode, activeFamilies, branchFilter, onlyWithAudio, showMixed, layerVisibility.choropleth));
       },
     });
-  }, [activeFamilies, branchFilter, onlyWithAudio, onNavigate, onSelect, selectedRegionCode, showMixed]);
+  }, [activeFamilies, branchFilter, layerVisibility.choropleth, onlyWithAudio, onNavigate, onSelect, selectedRegionCode, showMixed]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -101,7 +108,7 @@ export function DialectMap({
         if (cancelled) return;
         geoLayerRef.current?.remove();
         geoLayerRef.current = L.geoJSON(geojson, {
-          style: (feature) => getFeatureStyle(feature as Feature<Geometry, MapFeatureProps>, selectedRegionCode, activeFamilies, branchFilter, onlyWithAudio, showMixed),
+          style: (feature) => getFeatureStyle(feature as Feature<Geometry, MapFeatureProps>, selectedRegionCode, activeFamilies, branchFilter, onlyWithAudio, showMixed, layerVisibility.choropleth),
           onEachFeature: (feature, layer) => bindFeature(layer, feature as Feature<Geometry, MapFeatureProps>),
         }).addTo(map);
 
@@ -115,12 +122,13 @@ export function DialectMap({
     return () => {
       cancelled = true;
     };
-  }, [currentRegionCode, activeFamilies, bindFeature, branchFilter, onlyWithAudio, selectedRegionCode, showMixed]);
+  }, [currentRegionCode, activeFamilies, bindFeature, branchFilter, onlyWithAudio, selectedRegionCode, showMixed, layerVisibility.choropleth]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     surveyLayerRef.current?.remove();
+    if (!layerVisibility.surveyPoints) return;
     const layerGroup = L.layerGroup();
     getVisibleSurveyPoints(currentRegionCode).forEach((point) => {
       const marker = L.circleMarker([point.coordinates[1], point.coordinates[0]], {
@@ -139,7 +147,33 @@ export function DialectMap({
     });
     layerGroup.addTo(map);
     surveyLayerRef.current = layerGroup;
-  }, [currentRegionCode, onSelect]);
+  }, [currentRegionCode, layerVisibility.surveyPoints, onSelect]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    audioLayerRef.current?.remove();
+    if (!layerVisibility.audioPoints) return;
+    const layerGroup = L.layerGroup();
+    getVisibleAudioPoints(currentRegionCode).forEach((point) => {
+      const marker = L.circleMarker([point.coordinates[1], point.coordinates[0]], {
+        radius: 8,
+        color: "#7c2d12",
+        weight: 2,
+        fillColor: "#f97316",
+        fillOpacity: 0.94,
+      });
+      marker.bindTooltip(`<strong>${point.title}</strong><br/>${point.dialectName}<br/>音频样本`, {
+        sticky: true,
+        direction: "top",
+        className: "dialect-tooltip",
+      });
+      marker.on("click", () => onSelect(point.regionCode));
+      marker.addTo(layerGroup);
+    });
+    layerGroup.addTo(map);
+    audioLayerRef.current = layerGroup;
+  }, [currentRegionCode, layerVisibility.audioPoints, onSelect]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -178,20 +212,21 @@ function getFeatureStyle(
   branchFilter: string,
   onlyWithAudio: boolean,
   showMixed: boolean,
+  showChoropleth: boolean,
 ) {
   const props = feature?.properties;
   const normalized = props ? normalizeFeatureProps(props) : undefined;
   const stat = getRegionStatWithFallback(normalized?.code);
   const primary = getPrimaryDialect(stat);
   const matches = statMatchesFilters(stat, activeFamilies, branchFilter, onlyWithAudio, showMixed);
-  const fillColor = primary ? familyColors[primary.family] : "#c9c7be";
+  const fillColor = showChoropleth && primary ? familyColors[primary.family] : "#c9c7be";
   const isSelected = selectedRegionCode === normalized?.code;
 
   return {
     color: isSelected ? "#111827" : "#ffffff",
     weight: isSelected ? 3 : 1.2,
     fillColor,
-    fillOpacity: matches ? 0.78 : 0.12,
+    fillOpacity: showChoropleth ? (matches ? 0.78 : 0.12) : 0.04,
     opacity: matches ? 1 : 0.35,
   };
 }

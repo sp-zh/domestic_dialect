@@ -29,9 +29,10 @@
 查询优先级为：
 
 1. `regionDialectStats.ts`：精录地区或示例地区。
-2. `cityDialectStats.ts`：市级基础覆盖。
-3. `generatedCityDialectStats.ts`：由省级基础覆盖下沉生成的市级兜底。
-4. `provinceDialectStats.ts`：省级基础覆盖。
+2. `countyDialectStats.ts`：县级基础覆盖。
+3. `cityDialectStats.ts`：市级基础覆盖。
+4. `generatedCityDialectStats.ts`：由省级基础覆盖下沉生成的市级兜底。
+5. `provinceDialectStats.ts`：省级基础覆盖。
 
 维护规则：
 
@@ -85,6 +86,19 @@ npm run generate:map-index
 - `pointType: "literature"` 用于文献代表点。
 - `pointType: "placeholder"` 仅用于临时占位，正式展示前要替换。
 - 地图圆点图层会读取该文件，右侧信息面板也会显示当前地区的调查点。
+
+## 0.1.2 词表和句表
+
+词表位于 `src/data/wordLists.ts`，句表位于 `src/data/sentenceLists.ts`。二者都可以关联 `surveyPointId`、`dialectId`、`regionCode` 和音频 ID。
+
+建议证据级别使用：
+
+- `atlas`：地图集或配套文献。
+- `published-paper`：公开论文。
+- `local-gazetteer`：地方志。
+- `field-recording`：实地录音。
+- `derived-from-province`：省级下沉自动生成。
+- `unverified`：暂未核验。
 
 ## 0.2 外部元数据导入
 

@@ -2,6 +2,14 @@ export type RegionLevel = "country" | "province" | "city" | "county";
 
 export type DataConfidence = "high" | "medium" | "low" | "unknown";
 
+export type EvidenceLevel =
+  | "atlas"
+  | "published-paper"
+  | "local-gazetteer"
+  | "field-recording"
+  | "derived-from-province"
+  | "unverified";
+
 export type DialectFamily =
   | "官话"
   | "吴语"
@@ -66,6 +74,7 @@ export type RegionDialectStat = {
     percentageBasis?: "survey" | "census-language" | "literature-estimate" | "not-available";
     populationEstimate?: number;
     confidence: DataConfidence;
+    evidenceLevel?: EvidenceLevel;
     dataSource?: string;
     sourceUrl?: string;
     notes?: string;
@@ -129,13 +138,51 @@ export type SurveyPoint = {
   provinceCode: string;
   province: string;
   city?: string;
+  county?: string;
+  countyCode?: string;
+  town?: string;
   coordinates: [number, number];
   dialectId: string;
   dialectName: string;
   family: DialectFamily;
   source: string;
+  sourcePage?: string;
+  sourceMapId?: string;
+  speakerCount?: number;
+  recordingStatus?: "none" | "planned" | "available";
+  evidenceLevel?: EvidenceLevel;
   confidence: DataConfidence;
   pointType: "atlas" | "fieldwork" | "literature" | "placeholder";
   hasAudio?: boolean;
+  notes?: string;
+};
+
+export type LexicalItem = {
+  id: string;
+  regionCode: string;
+  surveyPointId?: string;
+  dialectId: string;
+  mandarin: string;
+  local: string;
+  romanization?: string;
+  ipa?: string;
+  audioId?: string;
+  source: string;
+  evidenceLevel: EvidenceLevel;
+  notes?: string;
+};
+
+export type SentenceItem = {
+  id: string;
+  regionCode: string;
+  surveyPointId?: string;
+  dialectId: string;
+  mandarin: string;
+  local: string;
+  romanization?: string;
+  ipa?: string;
+  audioId?: string;
+  source: string;
+  evidenceLevel: EvidenceLevel;
   notes?: string;
 };

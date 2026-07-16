@@ -40,6 +40,8 @@ https://sp-zh.github.io/domestic_dialect/
 - hover tooltip 显示地区名和主要方言
 - 点击地区后右侧显示方言、数据可信度、语言学特征、代表词汇、音频样本
 - 调查点/文献代表点圆点图层
+- 行政区填色、调查点、音频点图层开关
+- 词表和句表数据卡片
 - 按方言大类、小片、有无音频、混合方言区筛选
 - 城市名/方言名搜索定位
 - 面包屑、返回全国、返回省级、重置视图
@@ -99,3 +101,4 @@ domestic_dialect/
 - 调查材料入口：中国语言资源保护工程采录展示平台，`https://www.zhongguoyuyan.cn/`
 - 外部元数据索引：Glottolog、Wikidata、PHOIBLE。运行 `npm run import:metadata` 可刷新 `src/data/dialectMetadata.ts`。
 - 市级覆盖：手工细化的 `cityDialectStats.ts` 优先；未细化城市由 `generatedCityDialectStats.ts` 从省级覆盖下沉生成，需后续调查点核验。
+- 县级框架：`countyDialectStats.ts` 已接入查询优先级，可逐县补充。

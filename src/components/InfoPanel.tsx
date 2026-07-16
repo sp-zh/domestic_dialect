@@ -2,7 +2,7 @@ import { PauseCircle, PlayCircle, Volume2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { getDataSource } from "../data/sources";
 import type { DialectAudio } from "../types/dialect";
-import { confidenceLabel, getDialect, getDialectMetadata, getFeature, getRegionAudios, getRegionStat, getRegionStatWithFallback, getSurveyPointsForRegion } from "../utils/dataLookup";
+import { confidenceLabel, getDialect, getDialectMetadata, getFeature, getRegionAudios, getRegionStat, getRegionStatWithFallback, getSentencesForRegion, getSurveyPointsForRegion, getWordsForRegion } from "../utils/dataLookup";
 import { publicAssetUrl } from "../utils/publicPath";
 
 type InfoPanelProps = {
@@ -43,6 +43,8 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
   const feature = getFeature(activeDialect?.dialectId);
   const audios = getRegionAudios(stat.regionCode, activeDialect?.dialectId);
   const points = getSurveyPointsForRegion(regionCode);
+  const words = getWordsForRegion(stat.regionCode, activeDialect?.dialectId);
+  const sentences = getSentencesForRegion(stat.regionCode, activeDialect?.dialectId);
 
   const toggleAudio = (audio: DialectAudio) => {
     const current = audioRefs.current[audio.id];
@@ -122,6 +124,7 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
                   sourceUrl={dialect.sourceUrl}
                   basis={dialect.percentageBasis}
                   notes={dialect.notes}
+                  evidenceLevel={dialect.evidenceLevel}
                 />
               ) : null}
             </div>
@@ -152,7 +155,19 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
       </Card>
 
       <Card title="代表词汇">
-        {feature?.vocabulary.length ? (
+        {words.length ? (
+          <div className="space-y-2">
+            {words.map((word) => (
+              <div key={word.id} className="rounded-md border border-stone-200 p-3 text-sm dark:border-stone-700">
+                <p><span className="text-stone-500">普通话：</span>{word.mandarin}</p>
+                <p className="mt-1 font-medium"><span className="text-stone-500">本地：</span>{word.local}</p>
+                <p className="mt-1 text-xs text-stone-500">
+                  {word.romanization ? `转写：${word.romanization} · ` : ""}{word.ipa ? `IPA：${word.ipa} · ` : ""}证据：{evidenceLabel[word.evidenceLevel]}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : feature?.vocabulary.length ? (
           <div className="overflow-hidden rounded-md border border-stone-200 dark:border-stone-700">
             <table className="w-full text-left text-sm">
               <thead className="bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300">
@@ -178,6 +193,24 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
         )}
       </Card>
 
+      <Card title="代表句子">
+        {sentences.length ? (
+          <div className="space-y-2">
+            {sentences.map((sentence) => (
+              <div key={sentence.id} className="rounded-md border border-stone-200 p-3 text-sm dark:border-stone-700">
+                <p><span className="text-stone-500">普通话：</span>{sentence.mandarin}</p>
+                <p className="mt-1 font-medium"><span className="text-stone-500">本地：</span>{sentence.local}</p>
+                <p className="mt-1 text-xs text-stone-500">
+                  {sentence.romanization ? `转写：${sentence.romanization} · ` : ""}证据：{evidenceLabel[sentence.evidenceLevel]}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Empty text="该地区尚未录入代表句子。" />
+        )}
+      </Card>
+
       <Card title="调查点">
         {points.length ? (
           <div className="space-y-2">
@@ -193,7 +226,7 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
                   </span>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-stone-500">
-                  坐标：{point.coordinates.join(", ")} · 可信度：{confidenceLabel[point.confidence]} · {point.notes}
+                  坐标：{point.coordinates.join(", ")} · 可信度：{confidenceLabel[point.confidence]} · 证据：{evidenceLabel[point.evidenceLevel ?? "unverified"]} · 录音：{recordingLabel[point.recordingStatus ?? "none"]} · {point.notes}
                 </p>
               </div>
             ))}
@@ -382,18 +415,35 @@ const basisLabel: Record<string, string> = {
   "not-available": "未见公开比例",
 };
 
+const evidenceLabel: Record<string, string> = {
+  atlas: "地图集",
+  "published-paper": "论文",
+  "local-gazetteer": "地方志",
+  "field-recording": "实地录音",
+  "derived-from-province": "省级下沉",
+  unverified: "未核验",
+};
+
+const recordingLabel: Record<string, string> = {
+  none: "无",
+  planned: "计划中",
+  available: "已有",
+};
+
 function SourceLine({
   confidence,
   sourceId,
   sourceUrl,
   basis,
   notes,
+  evidenceLevel,
 }: {
   confidence: string;
   sourceId?: string;
   sourceUrl?: string;
   basis?: string;
   notes?: string;
+  evidenceLevel?: string;
 }) {
   const source = getDataSource(sourceId);
   const url = sourceUrl ?? source?.url;
@@ -402,6 +452,7 @@ function SourceLine({
     <p className="mt-1 text-xs leading-5 text-stone-500">
       数据可信度：{confidence}
       {basis ? ` · 比例依据：${basisLabel[basis] ?? basis}` : ""}
+      {evidenceLevel ? ` · 证据：${evidenceLabel[evidenceLevel] ?? evidenceLevel}` : ""}
       {source ? " · 来源：" : ""}
       {source && url ? (
         <a href={url} target="_blank" rel="noreferrer" className="text-cinnabar hover:underline">

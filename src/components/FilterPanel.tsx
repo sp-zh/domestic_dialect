@@ -11,12 +11,18 @@ type FilterPanelProps = {
   showMixed: boolean;
   showEstimated: boolean;
   query: string;
+  layerVisibility: {
+    choropleth: boolean;
+    surveyPoints: boolean;
+    audioPoints: boolean;
+  };
   onFamiliesChange: (families: DialectFamily[]) => void;
   onBranchChange: (branch: string) => void;
   onOnlyWithAudioChange: (value: boolean) => void;
   onShowMixedChange: (value: boolean) => void;
   onShowEstimatedChange: (value: boolean) => void;
   onQueryChange: (value: string) => void;
+  onLayerVisibilityChange: (value: FilterPanelProps["layerVisibility"]) => void;
   onReset: () => void;
 };
 
@@ -28,12 +34,14 @@ export function FilterPanel({
   showMixed,
   showEstimated,
   query,
+  layerVisibility,
   onFamiliesChange,
   onBranchChange,
   onOnlyWithAudioChange,
   onShowMixedChange,
   onShowEstimatedChange,
   onQueryChange,
+  onLayerVisibilityChange,
   onReset,
 }: FilterPanelProps) {
   const toggleFamily = (family: DialectFamily) => {
@@ -115,6 +123,13 @@ export function FilterPanel({
         <Toggle label="只显示有音频的地区" checked={onlyWithAudio} onChange={onOnlyWithAudioChange} />
         <Toggle label="显示混合方言区" checked={showMixed} onChange={onShowMixedChange} />
         <Toggle label="显示估算 / 暂缺标签" checked={showEstimated} onChange={onShowEstimatedChange} />
+      </div>
+
+      <div className="space-y-3 rounded-md border border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-900/70">
+        <h2 className="text-sm font-semibold text-stone-900 dark:text-stone-100">地图图层</h2>
+        <Toggle label="行政区填色" checked={layerVisibility.choropleth} onChange={(value) => onLayerVisibilityChange({ ...layerVisibility, choropleth: value })} />
+        <Toggle label="调查点" checked={layerVisibility.surveyPoints} onChange={(value) => onLayerVisibilityChange({ ...layerVisibility, surveyPoints: value })} />
+        <Toggle label="音频点" checked={layerVisibility.audioPoints} onChange={(value) => onLayerVisibilityChange({ ...layerVisibility, audioPoints: value })} />
       </div>
 
       <div>

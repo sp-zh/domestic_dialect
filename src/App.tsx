@@ -20,6 +20,11 @@ function App() {
   const [onlyWithAudio, setOnlyWithAudio] = useState(false);
   const [showMixed, setShowMixed] = useState(true);
   const [showEstimated, setShowEstimated] = useState(true);
+  const [layerVisibility, setLayerVisibility] = useState({
+    choropleth: true,
+    surveyPoints: true,
+    audioPoints: true,
+  });
   const [query, setQuery] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [dialogDialectId, setDialogDialectId] = useState<string | undefined>();
@@ -150,12 +155,14 @@ function App() {
               showMixed={showMixed}
               showEstimated={showEstimated}
               query={query}
+              layerVisibility={layerVisibility}
               onFamiliesChange={setActiveFamilies}
               onBranchChange={setBranchFilter}
               onOnlyWithAudioChange={setOnlyWithAudio}
               onShowMixedChange={setShowMixed}
               onShowEstimatedChange={setShowEstimated}
               onQueryChange={setQuery}
+              onLayerVisibilityChange={setLayerVisibility}
               onReset={resetFilters}
             />
             {searchMatches.length ? (
@@ -184,6 +191,7 @@ function App() {
               onlyWithAudio={onlyWithAudio}
               showMixed={showMixed}
               focusedRegionCode={focusedRegionCode}
+              layerVisibility={layerVisibility}
               onNavigate={navigateTo}
               onSelect={setSelectedRegionCode}
             />

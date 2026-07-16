@@ -1,5 +1,6 @@
 import { audioIndex } from "../data/audioIndex";
 import { cityDialectStats } from "../data/cityDialectStats";
+import { countyDialectStats } from "../data/countyDialectStats";
 import { dialects } from "../data/dialects";
 import { dialectMetadata } from "../data/dialectMetadata";
 import { generatedCityDialectStats } from "../data/generatedCityDialectStats";
@@ -9,6 +10,8 @@ import { provinceDialectStats } from "../data/provinceDialectStats";
 import { regionDialectStats } from "../data/regionDialectStats";
 import { regions } from "../data/regions";
 import { surveyPoints } from "../data/surveyPoints";
+import { wordLists } from "../data/wordLists";
+import { sentenceLists } from "../data/sentenceLists";
 import type { DataConfidence, DialectFamily, RegionDialectStat } from "../types/dialect";
 
 export const confidenceLabel: Record<DataConfidence, string> = {
@@ -42,6 +45,7 @@ export const getRegionStat = (code?: string) => {
   if (!code) return undefined;
   return (
     regionDialectStats.find((stat) => stat.regionCode === code) ??
+    countyDialectStats.find((stat) => stat.regionCode === code) ??
     cityDialectStats.find((stat) => stat.regionCode === code) ??
     generatedCityDialectStats.find((stat) => stat.regionCode === code) ??
     provinceDialectStats.find((stat) => stat.regionCode === code)
@@ -82,6 +86,35 @@ export const getVisibleSurveyPoints = (currentRegionCode: string) => {
   if (region.level === "province") return surveyPoints.filter((point) => point.provinceCode === currentRegionCode);
   return surveyPoints.filter((point) => point.regionCode === currentRegionCode || point.cityCode === currentRegionCode);
 };
+
+export const getVisibleAudioPoints = (currentRegionCode: string) => {
+  const region = getRegion(currentRegionCode);
+  const points = audioIndex
+    .map((audio) => {
+      const audioRegion = getRegion(audio.regionCode);
+      return audioRegion?.center
+        ? {
+            id: audio.id,
+            title: audio.title,
+            regionCode: audio.regionCode,
+            dialectName: audio.dialectName,
+            coordinates: audioRegion.center,
+          }
+        : undefined;
+    })
+    .filter((point): point is { id: string; title: string; regionCode: string; dialectName: string; coordinates: [number, number] } =>
+      Boolean(point),
+    );
+  if (!region || region.level === "country") return points;
+  if (region.level === "province") return points.filter((point) => point.regionCode.startsWith(region.code.slice(0, 2)));
+  return points.filter((point) => point.regionCode === currentRegionCode);
+};
+
+export const getWordsForRegion = (regionCode?: string, dialectId?: string) =>
+  wordLists.filter((item) => item.regionCode === regionCode && (!dialectId || item.dialectId === dialectId));
+
+export const getSentencesForRegion = (regionCode?: string, dialectId?: string) =>
+  sentenceLists.filter((item) => item.regionCode === regionCode && (!dialectId || item.dialectId === dialectId));
 
 export const getPrimaryDialect = (stat?: RegionDialectStat) => {
   if (!stat || stat.dialects.length === 0) return undefined;
