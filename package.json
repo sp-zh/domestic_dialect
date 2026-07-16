@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "import:metadata": "node scripts/import-dialect-metadata.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

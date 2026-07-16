@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { DialectDialog, InfoPanel } from "./components/InfoPanel";
 import { DialectMap } from "./components/DialectMap";
 import { FilterPanel } from "./components/FilterPanel";
+import { cityDialectStats } from "./data/cityDialectStats";
 import { linguisticGlossary } from "./data/linguisticGlossary";
 import { provinceDialectStats } from "./data/provinceDialectStats";
 import { regionDialectStats } from "./data/regionDialectStats";
@@ -26,7 +27,7 @@ function App() {
     () =>
       Array.from(
         new Set(
-          [...regionDialectStats, ...provinceDialectStats].flatMap((stat) =>
+          [...regionDialectStats, ...cityDialectStats, ...provinceDialectStats].flatMap((stat) =>
             stat.dialects.map((dialect) => dialect.branch).filter(Boolean),
           ),
         ),

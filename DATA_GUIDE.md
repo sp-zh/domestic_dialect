@@ -22,6 +22,50 @@
 - `china-language-resource-protection`：用于后续核对调查点、发音人和音视频材料。
 - `datav-geoatlas`：用于前端行政区边界。
 
+## 0.1 市级基础覆盖
+
+`src/data/cityDialectStats.ts` 存放“市级基础覆盖”数据。它不是精确调查数据，而是按《中国语言地图集》第2版等文献整理的市级大致归属，用于避免省内市级地图一片空白。
+
+查询优先级为：
+
+1. `regionDialectStats.ts`：精录地区或示例地区。
+2. `cityDialectStats.ts`：市级基础覆盖。
+3. `provinceDialectStats.ts`：省级基础覆盖。
+
+维护规则：
+
+- 不填 `percentage`，除非有公开、可核验的市级比例调查。
+- `notes` 需要说明“需按县区和调查点细化”。
+- 一个市可以填多个方言条目，用于过渡区、混合区和民族语言并存区。
+- 非汉语语言资源可用 `family: "其他"` 暂存，但不要混同为汉语方言比例。
+
+## 0.2 外部元数据导入
+
+`scripts/import-dialect-metadata.mjs` 会从外部数据库拉取辅助元数据，并生成：
+
+```txt
+src/data/dialectMetadata.ts
+src/data/dialectMetadata.report.json
+```
+
+运行：
+
+```bash
+npm run import:metadata
+```
+
+当前导入源：
+
+- Glottolog：Glottocode、英文名、ISO、上位分类线索。
+- Wikidata：条目 ID、别名、ISO、描述等。
+- PHOIBLE：部分语言/方言的音系 inventory 与音位样例。
+
+注意：
+
+- 外部元数据只是索引，不代表行政区分布。
+- PHOIBLE 对汉语方言覆盖不完整；小片可能回退到上位语言条目。
+- 导入后需要人工 review，再作为页面展示或研究依据。
+
 ## 1. 新增地区
 
 编辑 `src/data/regions.ts`，添加地区元信息：

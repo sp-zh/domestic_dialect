@@ -1,5 +1,7 @@
 import { audioIndex } from "../data/audioIndex";
+import { cityDialectStats } from "../data/cityDialectStats";
 import { dialects } from "../data/dialects";
+import { dialectMetadata } from "../data/dialectMetadata";
 import { linguisticFeatures } from "../data/linguisticFeatures";
 import { provinceDialectStats } from "../data/provinceDialectStats";
 import { regionDialectStats } from "../data/regionDialectStats";
@@ -31,7 +33,11 @@ export const getRegion = (code?: string) => regions.find((region) => region.code
 
 export const getRegionStat = (code?: string) => {
   if (!code) return undefined;
-  return regionDialectStats.find((stat) => stat.regionCode === code) ?? provinceDialectStats.find((stat) => stat.regionCode === code);
+  return (
+    regionDialectStats.find((stat) => stat.regionCode === code) ??
+    cityDialectStats.find((stat) => stat.regionCode === code) ??
+    provinceDialectStats.find((stat) => stat.regionCode === code)
+  );
 };
 
 export const getFallbackProvinceStat = (code?: string) => {
@@ -44,6 +50,8 @@ export const getRegionStatWithFallback = (code?: string) =>
   getRegionStat(code) ?? getFallbackProvinceStat(code);
 
 export const getDialect = (id?: string) => dialects.find((dialect) => dialect.id === id);
+
+export const getDialectMetadata = (id?: string) => dialectMetadata.find((metadata) => metadata.dialectId === id);
 
 export const getFeature = (dialectId?: string) =>
   linguisticFeatures.find((feature) => feature.dialectId === dialectId);

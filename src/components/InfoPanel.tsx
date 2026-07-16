@@ -2,7 +2,7 @@ import { PauseCircle, PlayCircle, Volume2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { getDataSource } from "../data/sources";
 import type { DialectAudio } from "../types/dialect";
-import { confidenceLabel, getDialect, getFeature, getRegionAudios, getRegionStat, getRegionStatWithFallback } from "../utils/dataLookup";
+import { confidenceLabel, getDialect, getDialectMetadata, getFeature, getRegionAudios, getRegionStat, getRegionStatWithFallback } from "../utils/dataLookup";
 import { publicAssetUrl } from "../utils/publicPath";
 
 type InfoPanelProps = {
@@ -244,6 +244,7 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
 export function DialectDialog({ dialectId, onClose }: { dialectId?: string; onClose: () => void }) {
   const dialect = getDialect(dialectId);
   const feature = getFeature(dialectId);
+  const metadata = getDialectMetadata(dialectId);
   if (!dialect) return null;
 
   return (
@@ -264,6 +265,41 @@ export function DialectDialog({ dialectId, onClose }: { dialectId?: string; onCl
             <X className="h-5 w-5" />
           </button>
         </div>
+        {metadata ? (
+          <div className="mb-4 rounded-md border border-stone-200 bg-stone-50 p-4 text-sm dark:border-stone-700 dark:bg-stone-900">
+            <h3 className="mb-2 font-medium text-stone-950 dark:text-stone-50">外部元数据索引</h3>
+            <div className="grid gap-2 text-stone-700 dark:text-stone-200 sm:grid-cols-2">
+              <p><strong>别名：</strong>{metadata.aliases.join(" / ") || "待补充"}</p>
+              <p><strong>英文名：</strong>{metadata.englishName ?? "待补充"}</p>
+              <p><strong>Glottocode：</strong>{metadata.glottocode ?? "未匹配"}</p>
+              <p><strong>ISO 639-3：</strong>{metadata.iso6393 ?? "未匹配"}</p>
+              <p><strong>Wikidata：</strong>{metadata.wikidataId ?? "未匹配"}</p>
+              <p><strong>PHOIBLE：</strong>{metadata.phoibleInventoryIds.length ? metadata.phoibleInventoryIds.join(", ") : "未匹配"}</p>
+            </div>
+            {metadata.classification.length ? (
+              <p className="mt-2 text-stone-600 dark:text-stone-300">
+                <strong>分类链：</strong>{metadata.classification.join(" > ")}
+              </p>
+            ) : null}
+            {metadata.phonemeSample.length ? (
+              <p className="mt-2 break-words text-stone-600 dark:text-stone-300">
+                <strong>音位样例：</strong>{metadata.phonemeSample.slice(0, 24).join(" ")}
+              </p>
+            ) : null}
+            {metadata.referenceLinks.length ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {metadata.referenceLinks.map((link) => (
+                  <a key={link} href={link} target="_blank" rel="noreferrer" className="rounded-md border border-stone-200 bg-white px-2 py-1 text-xs text-cinnabar hover:bg-stone-100 dark:border-stone-700 dark:bg-stone-950 dark:hover:bg-stone-800">
+                    {new URL(link).hostname}
+                  </a>
+                ))}
+              </div>
+            ) : null}
+            <p className="mt-3 text-xs leading-5 text-stone-500">
+              {metadata.notes} 外部库仅作为索引和音系参考，行政区分布仍以本项目调查/文献数据为准。
+            </p>
+          </div>
+        ) : null}
         {feature ? (
           <div className="space-y-3 text-sm leading-6 text-stone-700 dark:text-stone-200">
             <p><strong>声母：</strong>{feature.initials}</p>

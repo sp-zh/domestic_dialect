@@ -95,3 +95,4 @@ domestic_dialect/
 - 行政区边界：DataV.GeoAtlas，`https://geo.datav.aliyun.com/areas_v3/bound/`
 - 方言归属：《中国语言地图集》第2版，中国社会科学院语言研究所、香港城市大学语言资讯科学研究中心编，商务印书馆，2012。当前已提供省级基础覆盖；城市/区县级数据仍按实际录入情况逐步细化。
 - 调查材料入口：中国语言资源保护工程采录展示平台，`https://www.zhongguoyuyan.cn/`
+- 外部元数据索引：Glottolog、Wikidata、PHOIBLE。运行 `npm run import:metadata` 可刷新 `src/data/dialectMetadata.ts`。

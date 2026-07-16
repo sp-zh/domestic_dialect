@@ -25,6 +25,22 @@ export type Dialect = {
   color: string;
 };
 
+export type DialectMetadata = {
+  dialectId: string;
+  aliases: string[];
+  englishName?: string;
+  glottocode?: string;
+  wikidataId?: string;
+  iso6393?: string;
+  parentGlottocode?: string;
+  classification: string[];
+  referenceLinks: string[];
+  phonologySource?: string;
+  phoibleInventoryIds: string[];
+  phonemeSample: string[];
+  notes?: string;
+};
+
 export type Region = {
   code: string;
   name: string;
