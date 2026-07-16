@@ -2,7 +2,7 @@ import type { Feature, FeatureCollection, Geometry } from "geojson";
 import L, { type Layer } from "leaflet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DialectFamily, RegionLevel } from "../types/dialect";
-import { familyColors, getPrimaryDialect, getRegion, getRegionStatWithFallback, statMatchesFilters } from "../utils/dataLookup";
+import { familyColors, getPrimaryDialect, getRegion, getRegionStatWithFallback, getVisibleSurveyPoints, statMatchesFilters } from "../utils/dataLookup";
 import { publicAssetUrl } from "../utils/publicPath";
 
 type MapFeatureProps = {
@@ -40,6 +40,7 @@ export function DialectMap({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const geoLayerRef = useRef<L.GeoJSON | null>(null);
+  const surveyLayerRef = useRef<L.LayerGroup | null>(null);
   const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
@@ -118,6 +119,30 @@ export function DialectMap({
 
   useEffect(() => {
     const map = mapRef.current;
+    if (!map) return;
+    surveyLayerRef.current?.remove();
+    const layerGroup = L.layerGroup();
+    getVisibleSurveyPoints(currentRegionCode).forEach((point) => {
+      const marker = L.circleMarker([point.coordinates[1], point.coordinates[0]], {
+        radius: point.hasAudio ? 7 : 5,
+        color: "#1f2933",
+        weight: 1.5,
+        fillColor: familyColors[point.family],
+        fillOpacity: 0.95,
+      });
+      marker.bindTooltip(
+        `<strong>${point.name}</strong><br/>${point.dialectName} · ${point.city ?? point.province}<br/>${point.pointType === "literature" ? "文献代表点" : "调查点"}`,
+        { sticky: true, direction: "top", className: "dialect-tooltip" },
+      );
+      marker.on("click", () => onSelect(point.cityCode ?? point.regionCode));
+      marker.addTo(layerGroup);
+    });
+    layerGroup.addTo(map);
+    surveyLayerRef.current = layerGroup;
+  }, [currentRegionCode, onSelect]);
+
+  useEffect(() => {
+    const map = mapRef.current;
     const geoLayer = geoLayerRef.current;
     if (!map || !geoLayer || !focusedRegionCode) return;
 
@@ -140,7 +165,7 @@ export function DialectMap({
         </div>
       ) : null}
       <div className="pointer-events-none absolute bottom-4 right-4 max-w-sm rounded-md border border-white/50 bg-white/88 px-3 py-2 text-xs text-stone-600 shadow-soft backdrop-blur dark:border-stone-700 dark:bg-stone-950/82 dark:text-stone-300">
-        当前使用公开行政区划 GeoJSON；方言数据与地图边界分离维护。
+        当前使用公开行政区划 GeoJSON；圆点为调查点/文献代表点图层。
       </div>
     </div>
   );

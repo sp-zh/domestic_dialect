@@ -30,7 +30,8 @@
 
 1. `regionDialectStats.ts`：精录地区或示例地区。
 2. `cityDialectStats.ts`：市级基础覆盖。
-3. `provinceDialectStats.ts`：省级基础覆盖。
+3. `generatedCityDialectStats.ts`：由省级基础覆盖下沉生成的市级兜底。
+4. `provinceDialectStats.ts`：省级基础覆盖。
 
 维护规则：
 
@@ -38,6 +39,52 @@
 - `notes` 需要说明“需按县区和调查点细化”。
 - 一个市可以填多个方言条目，用于过渡区、混合区和民族语言并存区。
 - 非汉语语言资源可用 `family: "其他"` 暂存，但不要混同为汉语方言比例。
+
+`scripts/generate-map-index.mjs` 会从 `public/geojson/china/*.json` 生成：
+
+```txt
+src/data/generatedRegions.ts
+src/data/generatedRegions.report.json
+```
+
+运行：
+
+```bash
+npm run generate:map-index
+```
+
+生成的 region 索引用于全国下钻和搜索。当前自动生成的市级覆盖来自 `generatedCityDialectStats.ts`，只是“省级覆盖下沉”，不是精确市级调查。
+
+## 0.1.1 调查点覆盖
+
+`src/data/surveyPoints.ts` 存放调查点或文献代表点。字段包括：
+
+```ts
+{
+  id: "guangzhou-440100-cantonese",
+  name: "广州话代表点",
+  regionCode: "440100",
+  cityCode: "440100",
+  provinceCode: "440000",
+  coordinates: [113.27, 23.13],
+  dialectId: "cantonese_guangfu",
+  dialectName: "粤语广府片",
+  family: "粤语",
+  source: "language-atlas-china-2",
+  confidence: "medium",
+  pointType: "literature",
+  hasAudio: true,
+  notes: "文献代表点种子数据，待核验。"
+}
+```
+
+规则：
+
+- `pointType: "atlas"` 用于确认来自地图集/调查点的点。
+- `pointType: "fieldwork"` 用于你的实地采样点。
+- `pointType: "literature"` 用于文献代表点。
+- `pointType: "placeholder"` 仅用于临时占位，正式展示前要替换。
+- 地图圆点图层会读取该文件，右侧信息面板也会显示当前地区的调查点。
 
 ## 0.2 外部元数据导入
 

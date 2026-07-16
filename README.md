@@ -36,8 +36,10 @@ https://sp-zh.github.io/domestic_dialect/
 ## 当前功能
 
 - 全国省级地图，点击可进入示例省份的市级地图
+- 已生成全国市级 region 索引，可下钻到 DataV.GeoAtlas 已提供的市级/区县级边界
 - hover tooltip 显示地区名和主要方言
 - 点击地区后右侧显示方言、数据可信度、语言学特征、代表词汇、音频样本
+- 调查点/文献代表点圆点图层
 - 按方言大类、小片、有无音频、混合方言区筛选
 - 城市名/方言名搜索定位
 - 面包屑、返回全国、返回省级、重置视图
@@ -96,3 +98,4 @@ domestic_dialect/
 - 方言归属：《中国语言地图集》第2版，中国社会科学院语言研究所、香港城市大学语言资讯科学研究中心编，商务印书馆，2012。当前已提供省级基础覆盖；城市/区县级数据仍按实际录入情况逐步细化。
 - 调查材料入口：中国语言资源保护工程采录展示平台，`https://www.zhongguoyuyan.cn/`
 - 外部元数据索引：Glottolog、Wikidata、PHOIBLE。运行 `npm run import:metadata` 可刷新 `src/data/dialectMetadata.ts`。
+- 市级覆盖：手工细化的 `cityDialectStats.ts` 优先；未细化城市由 `generatedCityDialectStats.ts` 从省级覆盖下沉生成，需后续调查点核验。

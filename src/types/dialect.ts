@@ -120,3 +120,22 @@ export type DialectAudio = {
   duration?: number;
   license?: string;
 };
+
+export type SurveyPoint = {
+  id: string;
+  name: string;
+  regionCode: string;
+  cityCode?: string;
+  provinceCode: string;
+  province: string;
+  city?: string;
+  coordinates: [number, number];
+  dialectId: string;
+  dialectName: string;
+  family: DialectFamily;
+  source: string;
+  confidence: DataConfidence;
+  pointType: "atlas" | "fieldwork" | "literature" | "placeholder";
+  hasAudio?: boolean;
+  notes?: string;
+};

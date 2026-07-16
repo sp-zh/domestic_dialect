@@ -4,6 +4,7 @@ import { DialectDialog, InfoPanel } from "./components/InfoPanel";
 import { DialectMap } from "./components/DialectMap";
 import { FilterPanel } from "./components/FilterPanel";
 import { cityDialectStats } from "./data/cityDialectStats";
+import { generatedCityDialectStats } from "./data/generatedCityDialectStats";
 import { linguisticGlossary } from "./data/linguisticGlossary";
 import { provinceDialectStats } from "./data/provinceDialectStats";
 import { regionDialectStats } from "./data/regionDialectStats";
@@ -27,7 +28,7 @@ function App() {
     () =>
       Array.from(
         new Set(
-          [...regionDialectStats, ...cityDialectStats, ...provinceDialectStats].flatMap((stat) =>
+          [...regionDialectStats, ...cityDialectStats, ...generatedCityDialectStats, ...provinceDialectStats].flatMap((stat) =>
             stat.dialects.map((dialect) => dialect.branch).filter(Boolean),
           ),
         ),

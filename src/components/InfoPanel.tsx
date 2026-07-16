@@ -2,7 +2,7 @@ import { PauseCircle, PlayCircle, Volume2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { getDataSource } from "../data/sources";
 import type { DialectAudio } from "../types/dialect";
-import { confidenceLabel, getDialect, getDialectMetadata, getFeature, getRegionAudios, getRegionStat, getRegionStatWithFallback } from "../utils/dataLookup";
+import { confidenceLabel, getDialect, getDialectMetadata, getFeature, getRegionAudios, getRegionStat, getRegionStatWithFallback, getSurveyPointsForRegion } from "../utils/dataLookup";
 import { publicAssetUrl } from "../utils/publicPath";
 
 type InfoPanelProps = {
@@ -42,6 +42,7 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
   const activeDialect = stat.dialects.find((dialect) => dialect.dialectId === activeDialectId) ?? stat.dialects[0];
   const feature = getFeature(activeDialect?.dialectId);
   const audios = getRegionAudios(stat.regionCode, activeDialect?.dialectId);
+  const points = getSurveyPointsForRegion(regionCode);
 
   const toggleAudio = (audio: DialectAudio) => {
     const current = audioRefs.current[audio.id];
@@ -174,6 +175,31 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
           </div>
         ) : (
           <Empty text="暂无代表词汇。" />
+        )}
+      </Card>
+
+      <Card title="调查点">
+        {points.length ? (
+          <div className="space-y-2">
+            {points.map((point) => (
+              <div key={point.id} className="rounded-md border border-stone-200 bg-white p-3 text-sm dark:border-stone-700 dark:bg-stone-900">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-medium text-stone-950 dark:text-stone-50">{point.name}</p>
+                    <p className="mt-1 text-stone-500">{point.dialectName} · {point.city ?? point.province}</p>
+                  </div>
+                  <span className="rounded-md bg-stone-100 px-2 py-1 text-xs text-stone-500 dark:bg-stone-800">
+                    {point.pointType === "literature" ? "文献代表点" : point.pointType}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-stone-500">
+                  坐标：{point.coordinates.join(", ")} · 可信度：{confidenceLabel[point.confidence]} · {point.notes}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Empty text="该地区尚未录入调查点。可在 src/data/surveyPoints.ts 中添加文献调查点或实地采样点。" />
         )}
       </Card>
 

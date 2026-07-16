@@ -2,10 +2,13 @@ import { audioIndex } from "../data/audioIndex";
 import { cityDialectStats } from "../data/cityDialectStats";
 import { dialects } from "../data/dialects";
 import { dialectMetadata } from "../data/dialectMetadata";
+import { generatedCityDialectStats } from "../data/generatedCityDialectStats";
+import { generatedRegions } from "../data/generatedRegions";
 import { linguisticFeatures } from "../data/linguisticFeatures";
 import { provinceDialectStats } from "../data/provinceDialectStats";
 import { regionDialectStats } from "../data/regionDialectStats";
 import { regions } from "../data/regions";
+import { surveyPoints } from "../data/surveyPoints";
 import type { DataConfidence, DialectFamily, RegionDialectStat } from "../types/dialect";
 
 export const confidenceLabel: Record<DataConfidence, string> = {
@@ -29,13 +32,18 @@ export const familyColors: Record<DialectFamily, string> = {
   其他: "#8b8f88",
 };
 
-export const getRegion = (code?: string) => regions.find((region) => region.code === code);
+export const allRegions = [...generatedRegions, ...regions].filter(
+  (region, index, list) => list.findIndex((item) => item.code === region.code) === index,
+);
+
+export const getRegion = (code?: string) => allRegions.find((region) => region.code === code);
 
 export const getRegionStat = (code?: string) => {
   if (!code) return undefined;
   return (
     regionDialectStats.find((stat) => stat.regionCode === code) ??
     cityDialectStats.find((stat) => stat.regionCode === code) ??
+    generatedCityDialectStats.find((stat) => stat.regionCode === code) ??
     provinceDialectStats.find((stat) => stat.regionCode === code)
   );
 };
@@ -58,6 +66,22 @@ export const getFeature = (dialectId?: string) =>
 
 export const getRegionAudios = (regionCode?: string, dialectId?: string) =>
   audioIndex.filter((audio) => audio.regionCode === regionCode && (!dialectId || audio.dialectId === dialectId));
+
+export const getSurveyPointsForRegion = (regionCode?: string) => {
+  if (!regionCode) return [];
+  const region = getRegion(regionCode);
+  if (!region) return surveyPoints.filter((point) => point.regionCode === regionCode || point.cityCode === regionCode);
+  if (region.level === "country") return surveyPoints;
+  if (region.level === "province") return surveyPoints.filter((point) => point.provinceCode === regionCode);
+  return surveyPoints.filter((point) => point.regionCode === regionCode || point.cityCode === regionCode);
+};
+
+export const getVisibleSurveyPoints = (currentRegionCode: string) => {
+  const region = getRegion(currentRegionCode);
+  if (!region || region.level === "country") return surveyPoints;
+  if (region.level === "province") return surveyPoints.filter((point) => point.provinceCode === currentRegionCode);
+  return surveyPoints.filter((point) => point.regionCode === currentRegionCode || point.cityCode === currentRegionCode);
+};
 
 export const getPrimaryDialect = (stat?: RegionDialectStat) => {
   if (!stat || stat.dialects.length === 0) return undefined;
@@ -82,7 +106,7 @@ export const statMatchesFilters = (
 };
 
 export const searchTargets = () =>
-  regions
+  allRegions
     .filter((region) => region.level !== "country")
     .map((region) => {
       const stat = getRegionStatWithFallback(region.code);
