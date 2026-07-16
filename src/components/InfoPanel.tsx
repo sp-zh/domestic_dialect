@@ -2,7 +2,7 @@ import { PauseCircle, PlayCircle, Volume2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { getDataSource } from "../data/sources";
 import type { DialectAudio } from "../types/dialect";
-import { confidenceLabel, getDialect, getFeature, getRegionAudios, getRegionStat } from "../utils/dataLookup";
+import { confidenceLabel, getDialect, getFeature, getRegionAudios, getRegionStat, getRegionStatWithFallback } from "../utils/dataLookup";
 import { publicAssetUrl } from "../utils/publicPath";
 
 type InfoPanelProps = {
@@ -12,7 +12,8 @@ type InfoPanelProps = {
 };
 
 export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPanelProps) {
-  const stat = getRegionStat(regionCode);
+  const exactStat = getRegionStat(regionCode);
+  const stat = getRegionStatWithFallback(regionCode);
   const [activeDialectId, setActiveDialectId] = useState<string | undefined>();
   const [playingId, setPlayingId] = useState<string | undefined>();
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
@@ -65,6 +66,11 @@ export function InfoPanel({ regionCode, showEstimated, onOpenDialect }: InfoPane
         </p>
         <h2 className="mt-1 font-serif text-3xl font-semibold text-stone-950 dark:text-stone-50">{stat.regionName}</h2>
         <p className="mt-1 text-sm text-stone-500">行政区划代码：{stat.regionCode}</p>
+        {!exactStat && regionCode ? (
+          <p className="mt-2 rounded-md bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+            当前行政区尚未录入本级调查数据，正在显示所属省级基础覆盖。
+          </p>
+        ) : null}
       </div>
 
       <Card title="方言概览">

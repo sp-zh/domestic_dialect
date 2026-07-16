@@ -1,6 +1,7 @@
 import { audioIndex } from "../data/audioIndex";
 import { dialects } from "../data/dialects";
 import { linguisticFeatures } from "../data/linguisticFeatures";
+import { provinceDialectStats } from "../data/provinceDialectStats";
 import { regionDialectStats } from "../data/regionDialectStats";
 import { regions } from "../data/regions";
 import type { DataConfidence, DialectFamily, RegionDialectStat } from "../types/dialect";
@@ -28,8 +29,19 @@ export const familyColors: Record<DialectFamily, string> = {
 
 export const getRegion = (code?: string) => regions.find((region) => region.code === code);
 
-export const getRegionStat = (code?: string) =>
-  regionDialectStats.find((stat) => stat.regionCode === code);
+export const getRegionStat = (code?: string) => {
+  if (!code) return undefined;
+  return regionDialectStats.find((stat) => stat.regionCode === code) ?? provinceDialectStats.find((stat) => stat.regionCode === code);
+};
+
+export const getFallbackProvinceStat = (code?: string) => {
+  if (!code || code.length < 2) return undefined;
+  const provinceCode = `${code.slice(0, 2)}0000`;
+  return provinceDialectStats.find((stat) => stat.regionCode === provinceCode);
+};
+
+export const getRegionStatWithFallback = (code?: string) =>
+  getRegionStat(code) ?? getFallbackProvinceStat(code);
 
 export const getDialect = (id?: string) => dialects.find((dialect) => dialect.id === id);
 
@@ -65,7 +77,7 @@ export const searchTargets = () =>
   regions
     .filter((region) => region.level !== "country")
     .map((region) => {
-      const stat = getRegionStat(region.code);
+      const stat = getRegionStatWithFallback(region.code);
       const dialectNames = stat?.dialects.map((dialect) => dialect.dialectName).join(" ") ?? "";
       return {
         region,

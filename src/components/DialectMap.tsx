@@ -2,7 +2,7 @@ import type { Feature, FeatureCollection, Geometry } from "geojson";
 import L, { type Layer } from "leaflet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DialectFamily, RegionLevel } from "../types/dialect";
-import { familyColors, getPrimaryDialect, getRegion, getRegionStat, statMatchesFilters } from "../utils/dataLookup";
+import { familyColors, getPrimaryDialect, getRegion, getRegionStatWithFallback, statMatchesFilters } from "../utils/dataLookup";
 import { publicAssetUrl } from "../utils/publicPath";
 
 type MapFeatureProps = {
@@ -56,7 +56,7 @@ export function DialectMap({
 
   const bindFeature = useCallback((layer: Layer, feature: Feature<Geometry, MapFeatureProps>) => {
     const props = normalizeFeatureProps(feature.properties);
-    const stat = getRegionStat(props.code);
+    const stat = getRegionStatWithFallback(props.code);
     const primary = getPrimaryDialect(stat);
     const configuredRegion = getRegion(props.code);
     const drillUrl = props.geoJsonUrl ?? configuredRegion?.geoJsonUrl;
@@ -156,7 +156,7 @@ function getFeatureStyle(
 ) {
   const props = feature?.properties;
   const normalized = props ? normalizeFeatureProps(props) : undefined;
-  const stat = getRegionStat(normalized?.code);
+  const stat = getRegionStatWithFallback(normalized?.code);
   const primary = getPrimaryDialect(stat);
   const matches = statMatchesFilters(stat, activeFamilies, branchFilter, onlyWithAudio, showMixed);
   const fillColor = primary ? familyColors[primary.family] : "#c9c7be";

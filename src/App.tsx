@@ -4,6 +4,7 @@ import { DialectDialog, InfoPanel } from "./components/InfoPanel";
 import { DialectMap } from "./components/DialectMap";
 import { FilterPanel } from "./components/FilterPanel";
 import { linguisticGlossary } from "./data/linguisticGlossary";
+import { provinceDialectStats } from "./data/provinceDialectStats";
 import { regionDialectStats } from "./data/regionDialectStats";
 import type { DialectFamily } from "./types/dialect";
 import { getRegion, searchTargets } from "./utils/dataLookup";
@@ -24,7 +25,11 @@ function App() {
   const branches = useMemo(
     () =>
       Array.from(
-        new Set(regionDialectStats.flatMap((stat) => stat.dialects.map((dialect) => dialect.branch).filter(Boolean))),
+        new Set(
+          [...regionDialectStats, ...provinceDialectStats].flatMap((stat) =>
+            stat.dialects.map((dialect) => dialect.branch).filter(Boolean),
+          ),
+        ),
       ).sort() as string[],
     [],
   );
